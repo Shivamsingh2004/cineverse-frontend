@@ -15,10 +15,10 @@ export const AuthProvider = ({ children }) => {
     try {
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
-      const { data } = await axios.post(`${API_URL}/users/login`, {
-        email,
-        password,
-      });
+      const { data } = await axios.post(`${API_URL}/users/login`, 
+        { email, password },
+        { withCredentials: true }
+      );
       setUser(data);
       localStorage.setItem('userInfo', JSON.stringify(data));
       return { success: true };
@@ -28,11 +28,10 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
   };
   const register = async (name, email, password) => {
     try {
-      const { data } = await axios.post(`${API_URL}/users/register`, {
-        name,
-        email,
-        password,
-      });
+      const { data } = await axios.post(`${API_URL}/users/register`, 
+        { name, email, password },
+        { withCredentials: true }
+      );
       setUser(data);
       localStorage.setItem('userInfo', JSON.stringify(data));
       return { success: true };
@@ -42,7 +41,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
   };
   const logout = async () => {
     try {
-      await axios.post(`${API_URL}/users/logout`);
+      await axios.post(`${API_URL}/users/logout`, {}, { withCredentials: true });
       setUser(null);
       localStorage.removeItem('userInfo');
     } catch (error) {
