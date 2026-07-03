@@ -5,7 +5,7 @@ import {
   LayoutDashboard, Film, Users, Star, Bookmark,
   Plus, Edit3, Trash2, X, Save, AlertCircle
 } from 'lucide-react';
-const API = 'http://localhost:5000/api';
+const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 const AdminDashboard = () => {
   const { user } = useContext(AuthContext);
   const [activeTab, setActiveTab] = useState('dashboard');
