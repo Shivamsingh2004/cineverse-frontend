@@ -1,15 +1,28 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 import { fetchTmdbDetails, fetchTmdbData } from '../api/tmdb';
-import { Play, Plus, Heart, Share2, Star, Clock, Globe, ArrowLeft, X } from 'lucide-react';
+import { Play, Plus, Check, Heart, Share2, Star, Clock, Globe, ArrowLeft, X } from 'lucide-react';
 import MovieRow from '../components/MovieRow';
 import Footer from '../components/Footer';
 const MovieDetails = () => {
   const { id } = useParams();
+  const { user, toggleWatchlist, toggleFavorite } = useContext(AuthContext);
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
   const [trailerOpen, setTrailerOpen] = useState(false);
   const [trailerKey, setTrailerKey] = useState(null);
+  const [copied, setCopied] = useState(false);
+  
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const isInWatchlist = user?.watchlist?.some(m => String(m.id) === String(id));
+  const isInFavorites = user?.favorites?.some(m => String(m.id) === String(id));
+
   useEffect(() => {
     const getDetails = async () => {
       setLoading(true);
@@ -136,15 +149,30 @@ const MovieDetails = () => {
               <Play fill="currentColor" size={20} />
               {trailerKey ? 'Watch Trailer' : 'No Trailer'}
             </button>
-            <button className="flex items-center gap-2 bg-white/8 hover:bg-white/15 text-white px-6 py-4 rounded-xl font-semibold transition-all hover:scale-105 border border-white/10">
-              <Plus size={20} />
+            <button 
+              onClick={() => toggleWatchlist(movie)}
+              className={`flex items-center gap-2 px-6 py-4 rounded-xl font-semibold transition-all hover:scale-105 border border-white/10 ${
+                isInWatchlist ? 'bg-primary text-white border-transparent' : 'bg-white/8 hover:bg-white/15 text-white'
+              }`}
+            >
+              {isInWatchlist ? <Check size={20} /> : <Plus size={20} />}
               Watchlist
             </button>
-            <button className="w-14 h-14 flex items-center justify-center bg-white/8 hover:bg-white/15 rounded-xl transition-all hover:scale-105 text-white border border-white/10">
-              <Heart size={22} />
+            <button 
+              onClick={() => toggleFavorite(movie)}
+              className={`w-14 h-14 flex items-center justify-center rounded-xl transition-all hover:scale-105 border border-white/10 ${
+                isInFavorites ? 'bg-red-600 text-white border-transparent' : 'bg-white/8 hover:bg-white/15 text-white animate-pulse-once'
+              }`}
+            >
+              <Heart size={22} fill={isInFavorites ? "currentColor" : "none"} />
             </button>
-            <button className="w-14 h-14 flex items-center justify-center bg-white/8 hover:bg-white/15 rounded-xl transition-all hover:scale-105 text-white border border-white/10">
-              <Share2 size={22} />
+            <button 
+              onClick={handleShare}
+              className={`w-14 h-14 flex items-center justify-center rounded-xl transition-all hover:scale-105 border border-white/10 ${
+                copied ? 'bg-green-600 text-white border-transparent' : 'bg-white/8 hover:bg-white/15 text-white'
+              }`}
+            >
+              {copied ? <Check size={22} /> : <Share2 size={22} />}
             </button>
           </div>
         </div>

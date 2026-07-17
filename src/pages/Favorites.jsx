@@ -3,7 +3,7 @@ import { AuthContext } from '../context/AuthContext';
 import { Heart, Trash2 } from 'lucide-react';
 import Footer from '../components/Footer';
 const Favorites = () => {
-  const { user } = useContext(AuthContext);
+  const { user, toggleFavorite } = useContext(AuthContext);
   const favorites = user?.favorites || [];
   return (
     <div className="min-h-screen bg-bg-primary pt-28 pb-12">
@@ -28,7 +28,10 @@ const Favorites = () => {
                   </div>
                 )}
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <button className="text-red-400 hover:text-red-300 p-2 rounded-full bg-white/10 hover:bg-white/20 transition">
+                  <button 
+                    onClick={() => toggleFavorite(movie)}
+                    className="text-red-400 hover:text-red-300 p-2 rounded-full bg-white/10 hover:bg-white/20 transition"
+                  >
                     <Trash2 size={20} />
                   </button>
                 </div>

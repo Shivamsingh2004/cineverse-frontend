@@ -1,9 +1,16 @@
+import { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { Play, Plus, Heart, Info } from 'lucide-react';
+import { Play, Plus, Check, Heart, Info } from 'lucide-react';
+import { AuthContext } from '../context/AuthContext';
 const MovieCard = ({ movie }) => {
+  const { user, toggleWatchlist, toggleFavorite } = useContext(AuthContext);
   const imageUrl = movie.poster_path
     ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
     : null;
+
+  const isInWatchlist = user?.watchlist?.some(m => String(m.id) === String(movie.id));
+  const isInFavorites = user?.favorites?.some(m => String(m.id) === String(movie.id));
+
   return (
     <div className="relative group min-w-[150px] sm:min-w-[180px] md:min-w-[220px] h-[225px] sm:h-[270px] md:h-[330px] rounded-[18px] overflow-hidden cursor-pointer transition-all duration-300 ease-out hover:scale-[1.08] hover:shadow-[0_18px_45px_rgba(0,0,0,0.5)] hover:z-20 flex-shrink-0 bg-bg-secondary">
       {imageUrl ? (
@@ -42,16 +49,26 @@ const MovieCard = ({ movie }) => {
               <Play fill="black" size={14} className="ml-0.5" />
             </Link>
             <button
-              className="w-8 h-8 rounded-full bg-white/10 border border-white/30 flex items-center justify-center text-white hover:border-white hover:bg-white/20 transition-colors"
+              onClick={(e) => { e.stopPropagation(); toggleWatchlist(movie); }}
+              className={`w-8 h-8 rounded-full border flex items-center justify-center transition-colors ${
+                isInWatchlist 
+                  ? 'bg-primary border-transparent text-white' 
+                  : 'bg-white/10 border-white/30 text-white hover:border-white hover:bg-white/20'
+              }`}
               aria-label="Add to watchlist"
             >
-              <Plus size={16} />
+              {isInWatchlist ? <Check size={14} /> : <Plus size={16} />}
             </button>
             <button
-              className="w-8 h-8 rounded-full bg-white/10 border border-white/30 flex items-center justify-center text-white hover:border-white hover:bg-white/20 transition-colors"
+              onClick={(e) => { e.stopPropagation(); toggleFavorite(movie); }}
+              className={`w-8 h-8 rounded-full border flex items-center justify-center transition-colors ${
+                isInFavorites 
+                  ? 'bg-red-600 border-transparent text-white' 
+                  : 'bg-white/10 border-white/30 text-white hover:border-white hover:bg-white/20'
+              }`}
               aria-label="Add to favorites"
             >
-              <Heart size={14} />
+              <Heart size={14} fill={isInFavorites ? "currentColor" : "none"} />
             </button>
             <Link
               to={`/movie/${movie.id}`}
