@@ -1,8 +1,9 @@
 import { useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Play, Plus, Check, Heart, Info } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 const MovieCard = ({ movie }) => {
+  const navigate = useNavigate();
   const { user, toggleWatchlist, toggleFavorite } = useContext(AuthContext);
   const imageUrl = movie.poster_path
     ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
@@ -12,7 +13,10 @@ const MovieCard = ({ movie }) => {
   const isInFavorites = user?.favorites?.some(m => String(m.id) === String(movie.id));
 
   return (
-    <div className="relative group min-w-[150px] sm:min-w-[180px] md:min-w-[220px] h-[225px] sm:h-[270px] md:h-[330px] rounded-[18px] overflow-hidden cursor-pointer transition-all duration-300 ease-out hover:scale-[1.08] hover:shadow-[0_18px_45px_rgba(0,0,0,0.5)] hover:z-20 flex-shrink-0 bg-bg-secondary">
+    <div 
+      onClick={() => navigate(`/movie/${movie.id}`)}
+      className="relative group min-w-[150px] sm:min-w-[180px] md:min-w-[220px] h-[225px] sm:h-[270px] md:h-[330px] rounded-[18px] overflow-hidden cursor-pointer transition-all duration-300 ease-out hover:scale-[1.08] hover:shadow-[0_18px_45px_rgba(0,0,0,0.5)] hover:z-20 flex-shrink-0 bg-bg-secondary"
+    >
       {imageUrl ? (
         <img
           src={imageUrl}
